@@ -3,8 +3,6 @@ package com.lujieni.springbootwithjpa;
 import com.lujieni.springbootwithjpa.dao.PersonRepository;
 import com.lujieni.springbootwithjpa.entity.Person;
 import com.lujieni.springbootwithjpa.entity.vo.PersonVo;
-import com.lujieni.springbootwithjpa.factory.CommonStrategyFactory;
-import com.lujieni.springbootwithjpa.strategy.CommonStrategy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +28,7 @@ public class JpaCommonTest {
     private EntityManager entityManager;
 
     @Autowired
-    private CommonStrategyFactory commonStrategyFactory;
-
-
-    @Autowired
     private PersonRepository personRepository;
-
-
-    @Test
-    public void testHello(){
-        CommonStrategy cry = commonStrategyFactory.getStrategy("cry");
-        cry.hello();
-    }
 
     /**
      * 使用Criteria查询
