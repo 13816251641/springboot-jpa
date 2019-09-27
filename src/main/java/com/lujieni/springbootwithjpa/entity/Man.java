@@ -21,7 +21,8 @@ public class Man implements Serializable {
     @Column
     private String sex;
 
-    @OneToOne(fetch=FetchType.EAGER,cascade = CascadeType.ALL) //JPA注释： 一对一关系
+    //JPA注释： 一对一关系  EAGER不会有no session的问题,lazy会有
+    @OneToOne(fetch=FetchType.EAGER,cascade = CascadeType.ALL)
     // name:本表外键字段 referencedColumnName:本表外键字段对应的其它表的主键字段名称
     @JoinColumn(name="pet_id",referencedColumnName="id",nullable=false)
     private Pet pet;
