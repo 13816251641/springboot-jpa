@@ -30,63 +30,58 @@ public class JpaCommonTest {
     @Autowired
     private PersonRepository personRepository;
 
+
     /**
-     * 使用Criteria查询
-     * select a,b,count(a) from t group by a,b order by count(a)
+     * 将查询结果封装为vo对象,vo对象必须要有对应的构造方法,顺序也要一致才行
+     * select name,age,count(age) from Person group by name,age;
      */
     @Test
-    public void testWithCriteria(){
-/*        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<PersonVo> query = criteriaBuilder.createQuery(PersonVo.class);//赋值按照构造函数的顺序,和字段名称没有关系
-        Root<Person> root = query.from(Person.class);
-        List<Selection<?>> selections = new ArrayList<>();
-        selections.add(root.get("name").alias("lujieni"));
-        selections.add(root.get("age").as(Integer.class).alias("age"));
-        query.multiselect(selections);
-        List<PersonVo> resultList = entityManager.createQuery(query).getResultList();
-        resultList.forEach(o->{
-            System.out.println(o.toString());
-        });*/
-
+    public void testWithCriteria2(){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<PersonVo> query = criteriaBuilder.createQuery(PersonVo.class);
         Root<Person> root = query.from(Person.class);
+
         List<Selection<?>> selections = new ArrayList<>();//构造查询字段
         selections.add(root.get("name"));
         selections.add(root.get("age"));
         selections.add(criteriaBuilder.count(root.get("age")));
-        query.multiselect(selections);
+        query.multiselect(selections);//使用multiselect多维度查询
+
         List<Expression<?>> groupbys = new ArrayList<>();//构造group by条件,前后顺序对结果没有关系
         groupbys.add(root.get("name"));
         groupbys.add(root.get("age"));
         query.groupBy(groupbys);
-        query.orderBy(criteriaBuilder.desc(criteriaBuilder.count(root.get("id"))));//order by条件
         List<PersonVo> resultList = entityManager.createQuery(query).getResultList();
         resultList.forEach(o->{
             System.out.println(o.toString());
         });
+    }
 
-      /*  CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
-        Root<Person> root = query.from(Person.class);
-        query.select(criteriaBuilder.count(root.get("id")));
-        *//*
+    /**
+     * 使用Criteria进行动态查询,最后的sql为
+     * select count(id) from person group by name,age order by count(id) desc;
+     */
+    @Test
+    public void testWithCriteria1(){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);//查询结果的类型
+        Root<Person> root = query.from(Person.class);//查询哪张表
+        query.select(criteriaBuilder.count(root.get("id")));//select count(id)
+        /*
             Predicate predicate = criteriaBuilder.equal(root.get("age"), 28);
             query.where(predicate);
         *//*
-        *//*
-            最后一个有效
-            query.groupBy(root.get("name"));
-            query.groupBy(root.get("age"));
-            query.groupBy(root.get("id"));
-        *//*
+         */
+        /*
+           加入group by维度,注意group by中字段的先后顺序不会影响到结果
+         */
         List<Expression<?>> list = new ArrayList<>();
         list.add(root.get("name"));
         list.add(root.get("age"));
         query.groupBy(list);
-        query.orderBy(criteriaBuilder.desc(criteriaBuilder.count(root.get("id"))));
+        query.orderBy(criteriaBuilder.desc(criteriaBuilder.count(root.get("id"))));//order by
         List<Long> resultList = entityManager.createQuery(query).getResultList();
-        System.out.println(resultList);*/
+        System.out.println(resultList);
     }
 
 
