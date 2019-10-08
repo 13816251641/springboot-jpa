@@ -13,7 +13,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,6 +31,43 @@ public class JpaCommonTest {
 
     @Autowired
     private PersonRepository personRepository;
+
+
+
+    /**
+     * 加入了where查询
+     * select name,age,count(age) from person where
+     * birth between ? and ? group by name,age
+     */
+    @Test
+    public void testWithCriteria3() throws Exception{
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<PersonVo> query = criteriaBuilder.createQuery(PersonVo.class);
+        Root<Person> root = query.from(Person.class);
+
+        List<Selection<?>> selections = new ArrayList<>();//构造查询字段
+        selections.add(root.get("name"));
+        selections.add(root.get("age"));
+        selections.add(criteriaBuilder.count(root.get("age")));
+        query.multiselect(selections);//使用multiselect多维度查询
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date start = sdf.parse("2019-10-08");
+        Date end = sdf.parse("2019-10-09");
+        Predicate birth = criteriaBuilder.between(root.get("birth"), start, end);
+        query.where(birth);
+
+
+        List<Expression<?>> groupbys = new ArrayList<>();//构造group by条件,前后顺序对结果没有关系
+        groupbys.add(root.get("name"));
+        groupbys.add(root.get("age"));
+        query.groupBy(groupbys);
+        List<PersonVo> resultList = entityManager.createQuery(query).getResultList();
+        System.out.println(resultList.size());
+        resultList.forEach(o->{
+            System.out.println(o.toString());
+        });
+    }
 
 
     /**
