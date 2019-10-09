@@ -1,4 +1,4 @@
-package com.lujieni.springbootwithjpa.entity;
+package com.lujieni.springbootwithjpa.entity.pojo;
 
 import lombok.Data;
 

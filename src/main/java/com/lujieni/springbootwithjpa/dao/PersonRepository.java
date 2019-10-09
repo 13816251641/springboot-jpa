@@ -1,6 +1,7 @@
 package com.lujieni.springbootwithjpa.dao;
 
-import com.lujieni.springbootwithjpa.entity.Person;
+import com.lujieni.springbootwithjpa.entity.bo.PersonBO;
+import com.lujieni.springbootwithjpa.entity.pojo.Person;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,23 @@ public interface PersonRepository extends JpaRepository<Person,Long> {
 
     @Query(value = "select * from person where hobby_name=?1",nativeQuery = true)
     List<Person> findAllByHobbyName(String hobbyName);
+
+    /**
+     * 根据name字段分组,查询每组的个数
+     * @return
+     */
+    @Query(value = "select count(1) from person group by name",nativeQuery = true)
+    List<Integer> getCountGroupByName();
+
+    /**
+     * 根据name字段分组,查询每组的个数和每组的name
+     * 封装了返回实体类,可以看到sql语句里有new,因此
+     * nativesql一定不能为true,道理很简单,一旦为true
+     * jpa就直接给数据库执行了哇
+     * @return
+     */
+    @Query(value = "select new com.lujieni.springbootwithjpa.entity.bo.PersonBO(name,count (name)) from Person group by name")
+    List<PersonBO> getPersonGroupByName();
 
 
     /**

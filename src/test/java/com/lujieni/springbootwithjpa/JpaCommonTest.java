@@ -1,7 +1,9 @@
 package com.lujieni.springbootwithjpa;
 
 import com.lujieni.springbootwithjpa.dao.PersonRepository;
-import com.lujieni.springbootwithjpa.entity.Person;
+import com.lujieni.springbootwithjpa.entity.bo.PersonBO;
+import com.lujieni.springbootwithjpa.entity.pojo.Person;
+import com.lujieni.springbootwithjpa.entity.pojo.Person;
 import com.lujieni.springbootwithjpa.entity.vo.PersonVo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +33,22 @@ public class JpaCommonTest {
 
     @Autowired
     private PersonRepository personRepository;
+
+
+    @Test
+    public void testGroupByName(){
+        List<PersonBO> list = personRepository.getPersonGroupByName();
+        System.out.println(list);
+    }
+
+    /**
+     *测试利用name进行分组后的个数
+     */
+    @Test
+    public void testCountGroupByName(){
+        List<Integer> list = personRepository.getCountGroupByName();
+        System.out.println(list);
+    }
 
 
 

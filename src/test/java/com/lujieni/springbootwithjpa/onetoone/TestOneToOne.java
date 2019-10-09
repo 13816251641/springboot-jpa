@@ -2,8 +2,7 @@ package com.lujieni.springbootwithjpa.onetoone;
 
 
 import com.lujieni.springbootwithjpa.dao.ManRepository;
-import com.lujieni.springbootwithjpa.entity.Man;
-import com.lujieni.springbootwithjpa.entity.Person;
+import com.lujieni.springbootwithjpa.entity.pojo.Man;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ public class TestOneToOne {
 
     @Autowired
     private ManRepository manRepository;
-
 
     /**
      * 级联删除没问题

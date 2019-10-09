@@ -1,6 +1,6 @@
 package com.lujieni.springbootwithjpa.dao;
 
-import com.lujieni.springbootwithjpa.entity.Man;
+import com.lujieni.springbootwithjpa.entity.pojo.Man;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
