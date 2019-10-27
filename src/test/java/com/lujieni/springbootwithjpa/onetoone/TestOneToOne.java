@@ -26,7 +26,7 @@ public class TestOneToOne {
      */
     @Test
     public void oneToOneDelete(){
-        manRepository.deleteById(2);
+       // manRepository.deleteById(2);
     }
 
     /**

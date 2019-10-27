@@ -27,7 +27,8 @@ public interface PersonRepository extends JpaRepository<Person,Long> {
      * 根据name字段分组,查询每组的个数和每组的name
      * 封装了返回实体类,可以看到sql语句里有new,因此
      * nativesql一定不能为true,道理很简单,一旦为true
-     * jpa就直接给数据库执行了哇
+     * jpa就直接给数据库执行了导致无法实现返回自定义
+     * 类型的功能
      * @return
      */
     @Query(value = "select new com.lujieni.springbootwithjpa.entity.bo.PersonBO(name,count (name)) from Person group by name")

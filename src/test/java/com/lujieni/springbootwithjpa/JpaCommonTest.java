@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 通用jpa操作代码测试
@@ -30,9 +31,22 @@ public class JpaCommonTest {
     @Autowired
     @PersistenceContext
     private EntityManager entityManager;
-
     @Autowired
     private PersonRepository personRepository;
+
+
+    /**
+     * 测试利用注解自动生成创建时间和更新时间 OK
+     */
+    @Test
+    public void testAutoSetTime(){
+        Optional<Person> option = personRepository.findById(24L);
+        if(option.isPresent()){
+            Person person = option.get();
+            person.setAge(1);
+            personRepository.save(person);
+        }
+    }
 
 
     @Test
