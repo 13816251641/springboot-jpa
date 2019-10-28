@@ -4,14 +4,21 @@ import com.lujieni.springbootwithjpa.entity.bo.PersonBO;
 import com.lujieni.springbootwithjpa.entity.pojo.Person;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
 /**
- * 这里什么注解都不用配置,好神奇
+ *  加上@Repository注解Service层idea不会报错,对于程序而言没有影响
  */
 public interface PersonRepository extends JpaRepository<Person,Long> {
+
+    /* @Query中的sql是update或者delete的就一定要加@Modifying */
+    @Modifying
+    @Query(value = "delete from Person where id=?1")
+    int deleteData(Long id);
+
 
     @Query(value = "select * from person where hobby_name=?1",nativeQuery = true)
     List<Person> findAllByHobbyName(String hobbyName);

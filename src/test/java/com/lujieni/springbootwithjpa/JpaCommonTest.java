@@ -5,12 +5,14 @@ import com.lujieni.springbootwithjpa.entity.bo.PersonBO;
 import com.lujieni.springbootwithjpa.entity.pojo.Person;
 import com.lujieni.springbootwithjpa.entity.pojo.Person;
 import com.lujieni.springbootwithjpa.entity.vo.PersonVo;
+import com.lujieni.springbootwithjpa.service.PersonService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -33,6 +35,47 @@ public class JpaCommonTest {
     private EntityManager entityManager;
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private PersonService personService;
+
+
+    /**
+     * 测试多事务下的回滚 OK
+     * 1.事务的默认传播级别是有就依附没有就创建
+     * 2.默认传播级别会导致事务一起生效一起回滚但
+     *   对于日志表来说即使失败也要记一笔所以可以
+     *   使用@Transactional(propagation = Propagation.REQUIRES_NEW)
+     *   来代表这个事务将当前事务挂起重新构建一个事务
+     */
+    @Test
+    public void testMultiTransaction(){
+        personService.insertOne();
+    }
+
+
+    /**
+     * 测试使用@Query进行删除
+     * 1.@Query不支持新增
+     * 2.@Query如果是修改和删除操作一定要加@Modifying
+     * 3.@Query+@Modifying一定需要事务支持才行
+     */
+    @Test
+    public void testDeleteDataUseQuery(){
+        personService.deleteDataUseQuery(1L);
+    }
+
+    /**
+     * 测试事务的回滚  OK
+     */
+    @Test
+    @Transactional(rollbackFor = Exception.class)
+    public void testTransaction(){
+            Person person = new Person();
+            person.setAge(100);
+            personRepository.save(person);
+            int i= 5/0;
+    }
 
 
     /**
