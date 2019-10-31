@@ -8,6 +8,7 @@ import com.lujieni.springbootwithjpa.entity.pojo.Person;
 import com.lujieni.springbootwithjpa.entity.pojo.User;
 import com.lujieni.springbootwithjpa.entity.vo.PersonVo;
 import com.lujieni.springbootwithjpa.service.PersonService;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,6 +32,7 @@ import java.util.Optional;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Slf4j
 public class JpaCommonTest {
 
     @Autowired
@@ -41,6 +44,18 @@ public class JpaCommonTest {
     private PersonService personService;
     @Autowired
     private UserRepository userRepository;
+
+
+    @Test
+    public void test(){
+     try {
+         /*使用断言时当入参不符合要求的时候就会抛出IllegalArgumentException异常*/
+         Assert.notNull(null, "为null了");
+     }catch (Exception e){
+         log.info(e.getMessage());
+     }
+    }
+
 
 
     /**
