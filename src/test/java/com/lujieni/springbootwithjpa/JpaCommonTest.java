@@ -1,9 +1,11 @@
 package com.lujieni.springbootwithjpa;
 
 import com.lujieni.springbootwithjpa.dao.PersonRepository;
+import com.lujieni.springbootwithjpa.dao.UserRepository;
 import com.lujieni.springbootwithjpa.entity.bo.PersonBO;
 import com.lujieni.springbootwithjpa.entity.pojo.Person;
 import com.lujieni.springbootwithjpa.entity.pojo.Person;
+import com.lujieni.springbootwithjpa.entity.pojo.User;
 import com.lujieni.springbootwithjpa.entity.vo.PersonVo;
 import com.lujieni.springbootwithjpa.service.PersonService;
 import org.junit.Test;
@@ -35,9 +37,27 @@ public class JpaCommonTest {
     private EntityManager entityManager;
     @Autowired
     private PersonRepository personRepository;
-
     @Autowired
     private PersonService personService;
+    @Autowired
+    private UserRepository userRepository;
+
+
+    /**
+     *
+     * 测试使用@Query  OK
+     *
+     *使用@Query返回的list里的参数类型是Object类型的,
+     *如果你想要让他变成你想要的类型就要自己在里面加
+     *入new
+     */
+    @Test
+    public void testUseQuery(){
+        Sort sort = new Sort(Sort.Direction.DESC,"id");//根据id降序
+        Pageable pageable = PageRequest.of(2,3,sort);//页码从0开始,返回第一页&每页2条数据
+        List<User> users = userRepository.selectByPasswordWithPage("123", pageable);
+        System.out.println("hello");
+    }
 
 
     /**

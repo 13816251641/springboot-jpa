@@ -1,14 +1,14 @@
 package com.lujieni.springbootwithjpa.entity.pojo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class User {
     @Id
@@ -19,6 +19,6 @@ public class User {
     private String username;
 
     @Column
-    private Integer password;
+    private String password;
 
 }
