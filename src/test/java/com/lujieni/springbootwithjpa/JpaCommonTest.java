@@ -8,6 +8,7 @@ import com.lujieni.springbootwithjpa.entity.pojo.Person;
 import com.lujieni.springbootwithjpa.entity.pojo.User;
 import com.lujieni.springbootwithjpa.entity.vo.PersonVo;
 import com.lujieni.springbootwithjpa.service.PersonService;
+import com.lujieni.springbootwithjpa.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,13 +45,28 @@ public class JpaCommonTest {
     private PersonService personService;
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private UserService userService;
 
     @Test
-    public void test(){
+    public void testGetUserByPassword(){
+        List<User> user = userService.getUserByPassword("1234");
+        user.forEach(t->{
+            System.out.println(t.toString());
+            /*这里return循环仍旧会继续执行*/
+            return;
+        });
+    }
+
+
+    /**
+     * 测试断言 OK
+     */
+    @Test
+    public void testAssert(){
      try {
          /*使用断言时当入参不符合要求的时候就会抛出IllegalArgumentException异常*/
-         Assert.notNull(null, "为null了");
+         Assert.notNull(1, "为null了");
      }catch (Exception e){
          log.info(e.getMessage());
      }
