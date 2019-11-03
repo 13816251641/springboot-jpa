@@ -18,6 +18,7 @@ import java.util.List;
  */
 @Repository
 public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificationExecutor<User> {
+    //@Query(value = "select id,username,password from User where password=?1")
     @Query(value = "select new com.lujieni.springbootwithjpa.entity.pojo.User(id,username,password) from User where password=?1")
     List<User> selectByPasswordWithPage(String password, Pageable pageable);
 }

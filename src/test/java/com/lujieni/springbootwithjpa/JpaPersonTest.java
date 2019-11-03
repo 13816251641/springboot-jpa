@@ -1,27 +1,20 @@
 package com.lujieni.springbootwithjpa;
 
 import com.lujieni.springbootwithjpa.dao.PersonRepository;
-import com.lujieni.springbootwithjpa.dao.UserRepository;
 import com.lujieni.springbootwithjpa.entity.bo.PersonBO;
-import com.lujieni.springbootwithjpa.entity.pojo.Person;
 import com.lujieni.springbootwithjpa.entity.pojo.Person;
 import com.lujieni.springbootwithjpa.entity.pojo.User;
 import com.lujieni.springbootwithjpa.entity.vo.PersonVo;
 import com.lujieni.springbootwithjpa.service.PersonService;
-import com.lujieni.springbootwithjpa.service.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,66 +22,23 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 通用jpa操作代码测试
+ * @Auther ljn
+ * @Date 2019/11/3
+ * JPA 基于person表的测试
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@Slf4j
-public class JpaCommonTest {
+public class JpaPersonTest {
+
+    @Autowired
+    private PersonRepository personRepository;
 
     @Autowired
     @PersistenceContext
-    private EntityManager entityManager;
-    @Autowired
-    private PersonRepository personRepository;
+    private EntityManager entityManager;//Criteria查询使用
+
     @Autowired
     private PersonService personService;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserService userService;
-
-    @Test
-    public void testGetUserByPassword(){
-        List<User> user = userService.getUserByPassword("1234");
-        user.forEach(t->{
-            System.out.println(t.toString());
-            /*这里return循环仍旧会继续执行*/
-            return;
-        });
-    }
 
 
-    /**
-     * 测试断言 OK
-     */
-    @Test
-    public void testAssert(){
-     try {
-         /*使用断言时当入参不符合要求的时候就会抛出IllegalArgumentException异常*/
-         Assert.notNull(1, "为null了");
-     }catch (Exception e){
-         log.info(e.getMessage());
-     }
-    }
-
-
-
-    /**
-     *
-     * 测试使用@Query  OK
-     *
-     *使用@Query返回的list里的参数类型是Object类型的,
-     *如果你想要让他变成你想要的类型就要自己在里面加
-     *入new
-     */
-    @Test
-    public void testUseQuery(){
-        Sort sort = new Sort(Sort.Direction.DESC,"id");//根据id降序
-        Pageable pageable = PageRequest.of(2,3,sort);//页码从0开始,返回第一页&每页2条数据
-        List<User> users = userRepository.selectByPasswordWithPage("123", pageable);
-        System.out.println("hello");
-    }
 
 
     /**
@@ -103,7 +53,6 @@ public class JpaCommonTest {
     public void testMultiTransaction(){
         personService.insertOne();
     }
-
 
     /**
      * 测试使用@Query进行删除
@@ -122,10 +71,10 @@ public class JpaCommonTest {
     @Test
     @Transactional(rollbackFor = Exception.class)
     public void testTransaction(){
-            Person person = new Person();
-            person.setAge(100);
-            personRepository.save(person);
-            int i= 5/0;
+        Person person = new Person();
+        person.setAge(100);
+        personRepository.save(person);
+        int i= 5/0;
     }
 
 
@@ -142,7 +91,9 @@ public class JpaCommonTest {
         }
     }
 
-
+    /**
+     * 测试使用@Query注解并自己封装返回实体类
+     */
     @Test
     public void testGroupByName(){
         List<PersonBO> list = personRepository.getPersonGroupByName();
@@ -158,18 +109,15 @@ public class JpaCommonTest {
         System.out.println(list);
     }
 
-
-
     /**
      * 加入了where查询
-     * select name,age,count(age) from person where
-     * birth between ? and ? group by name,age
+     * select name,age,count(age) from person where birth between ? and ? group by name,age
      */
     @Test
     public void testWithCriteria3() throws Exception{
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<PersonVo> query = criteriaBuilder.createQuery(PersonVo.class);
-        Root<Person> root = query.from(Person.class);
+        Root<Person> root = query.from(Person.class);//查询哪张表
 
         List<Selection<?>> selections = new ArrayList<>();//构造查询字段
         selections.add(root.get("name"));
@@ -177,7 +125,7 @@ public class JpaCommonTest {
         selections.add(criteriaBuilder.count(root.get("age")));
         query.multiselect(selections);//使用multiselect多维度查询
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date start = sdf.parse("2019-10-08");
         Date end = sdf.parse("2019-10-09");
         Predicate birth = criteriaBuilder.between(root.get("birth"), start, end);
@@ -204,7 +152,7 @@ public class JpaCommonTest {
     public void testWithCriteria2(){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<PersonVo> query = criteriaBuilder.createQuery(PersonVo.class);
-        Root<Person> root = query.from(Person.class);
+        Root<Person> root = query.from(Person.class);//查询哪张表
 
         List<Selection<?>> selections = new ArrayList<>();//构造查询字段
         selections.add(root.get("name"));
@@ -216,6 +164,7 @@ public class JpaCommonTest {
         groupbys.add(root.get("name"));
         groupbys.add(root.get("age"));
         query.groupBy(groupbys);
+
         List<PersonVo> resultList = entityManager.createQuery(query).getResultList();
         resultList.forEach(o->{
             System.out.println(o.toString());
@@ -233,10 +182,11 @@ public class JpaCommonTest {
         Root<Person> root = query.from(Person.class);//查询哪张表
         query.select(criteriaBuilder.count(root.get("id")));//select count(id)
         /*
+            加入where条件
             Predicate predicate = criteriaBuilder.equal(root.get("age"), 28);
             query.where(predicate);
-        *//*
-         */
+        */
+
         /*
            加入group by维度,注意group by中字段的先后顺序不会影响到结果
          */
@@ -265,16 +215,16 @@ public class JpaCommonTest {
     }
 
     /**
-     * 测试自定义sql查询
+     * 测试自定义sql查询(基于@Query标签)
      */
     @Test
-    public void ownSqlQuery(){
+    public void testOwnSqlQuery(){
         List<Person> result = personRepository.findAllByHobbyName("睡觉");
         System.out.println(result);
     }
 
     /**
-     * 根据name进行全模糊查询,jpa会自动帮你在字段左边加入%
+     * 根据name进行左模糊查询,jpa会自动帮你在字段左边加入%
      */
     @Test
     public void queryByNameEndingWith(){
@@ -298,7 +248,7 @@ public class JpaCommonTest {
      * Hibernate: insert into person (age, name) values (?, ?)
      */
     @Test
-    public void insertAll(){
+    public void testInsertAll(){
         List<Person> list = new ArrayList<>();
         Person p1 = new Person();
         p1.setName("a");
@@ -316,7 +266,7 @@ public class JpaCommonTest {
      * 测试单条插入功能
      */
     @Test
-    public void insertOne() {
+    public void testInsertOne() {
         Person p = new Person();
         p.setName("陆捷旎232");
         p.setAge(28);
@@ -364,6 +314,7 @@ public class JpaCommonTest {
     @Test
     public void deleteAllByName(){
         personRepository.deleteInBatch(personRepository.findByName("赵柳"));
-        //personRepository.deleteAll(personRepository.findByName("赵柳"));
+        /*personRepository.deleteAll(personRepository.findByName("赵柳"));*/
     }
+
 }

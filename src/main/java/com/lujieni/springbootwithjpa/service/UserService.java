@@ -43,7 +43,7 @@ public class UserService {
             return criteriaBuilder.and(p1);
         });
           /*
-          匿名类
+          new了一个匿名内部类
           userRepository.findAll(new Specification<User>() {
             @Override
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
