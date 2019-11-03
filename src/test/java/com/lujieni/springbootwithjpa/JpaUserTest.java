@@ -16,17 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.*;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
-import java.util.Optional;
+
 
 /**
  * 通用jpa操作代码测试
@@ -35,12 +29,6 @@ import java.util.Optional;
 @SpringBootTest
 @Slf4j
 public class JpaUserTest {
-
-    @Autowired
-    @PersistenceContext
-    private EntityManager entityManager;
-    @Autowired
-    private PersonService personService;
     @Autowired
     private UserRepository userRepository;
     @Autowired
