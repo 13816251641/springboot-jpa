@@ -7,8 +7,11 @@ import com.lujieni.springbootwithjpa.entity.pojo.User;
 import com.lujieni.springbootwithjpa.entity.vo.PersonVo;
 import com.lujieni.springbootwithjpa.service.PersonService;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -26,6 +29,8 @@ import java.util.Optional;
  * @Date 2019/11/3
  * JPA 基于person表的测试
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class JpaPersonTest {
 
     @Autowired
