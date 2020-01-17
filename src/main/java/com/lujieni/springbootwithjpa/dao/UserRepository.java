@@ -18,9 +18,15 @@ import java.util.List;
  */
 @Repository
 public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificationExecutor<User> {
-/*
-    @Query(value = "select id,username,password from User where password=?1",nativeQuery = true)
-*/
+
+    //@Query(value = "select id,username,password from User where password=?1",nativeQuery = true)可以
+    //@Query(value = "select id,username,password from User where password=?1") 使用List<User>接收会报错
+
     @Query(value = "select new com.lujieni.springbootwithjpa.entity.pojo.User(id,username,password) from User where password=?1")
     List<User> selectByPasswordWithPage(String password, Pageable pageable);
+
+    /*根据用户名返回用户*/
+    List<User> findByUsername(String username);
+
+
 }

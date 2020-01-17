@@ -3,7 +3,6 @@ package com.lujieni.springbootwithjpa;
 import com.lujieni.springbootwithjpa.dao.PersonRepository;
 import com.lujieni.springbootwithjpa.entity.bo.PersonBO;
 import com.lujieni.springbootwithjpa.entity.pojo.Person;
-import com.lujieni.springbootwithjpa.entity.pojo.User;
 import com.lujieni.springbootwithjpa.entity.vo.PersonVo;
 import com.lujieni.springbootwithjpa.service.PersonService;
 import org.junit.Test;
@@ -42,6 +41,9 @@ public class JpaPersonTest {
 
     @Autowired
     private PersonService personService;
+
+
+
 
 
 

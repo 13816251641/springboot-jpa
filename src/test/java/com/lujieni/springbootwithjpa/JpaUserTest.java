@@ -34,15 +34,24 @@ public class JpaUserTest {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private PersonRepository personRepository;
+    /**
+     * 如果在repository中设置返回值为User,如果只返回
+     * 一条数据当然没问题,如果是多条数据数据程序会报
+     * 错,所以如果返回多条数据建议使用List接收
+     */
+    @Test
+    public void testFindByUsername(){
+        List<User> list = userRepository.findByUsername("定位");
+        System.out.println(list);
+    }
+
 
     @Test
     public void testGetUserByPassword(){
         List<User> user = userService.getUserByPassword("1234");
         user.forEach(t->{
             System.out.println(t.toString());
-            /*这里return循环仍旧会继续执行*/
+            /*这里return后循环仍旧会继续执行*/
             return;
         });
     }
@@ -53,28 +62,29 @@ public class JpaUserTest {
      */
     @Test
     public void testAssert(){
-     try {
-         /*使用断言时当入参不符合要求的时候就会抛出IllegalArgumentException异常*/
-         Assert.notNull(1, "为null了");
-     }catch (Exception e){
-         log.info(e.getMessage());
-     }
+         try {
+             /*使用断言时当入参不符合要求的时候就会抛出IllegalArgumentException异常*/
+             Assert.notNull(null, "为null了");
+         }catch (Exception e){
+             log.info(e.getMessage());
+         }
     }
 
 
 
     /**
+     *测试使用@Query
      *
-     *测试使用@Query  OK
-     *
-     *使用@Query并且nativeQuery=false返回的list里的参数类型是Object类型的,
-     *如果你想要让他变成你想要的类型就要自己在里面加入new,但如果nativeQuery=true
-     *返回直接就是实体类了,不需要new了
+     *使用@Query并且nativeQuery=false返回的list里的参数类型是Object类型的;
+     *如果想让他变成你想要的类型就要自己在里面new对象;
+     *但如果nativeQuery=true返回直接就是实体类了,不需要new了
      */
     @Test
     public void testUseQuery(){
+        /* 分页和排序条件 */
         Sort sort = new Sort(Sort.Direction.DESC,"id");//根据id降序
-        Pageable pageable = PageRequest.of(0,3,sort);//页码从0开始,返回第一页&每页2条数据
+        Pageable pageable = PageRequest.of(0,3,sort);//页码从0开始,返回第一页&每页3条数据
+
         List<User> users = userRepository.selectByPasswordWithPage("123", pageable);
         users.forEach(e->{
             System.out.println(e.toString());
